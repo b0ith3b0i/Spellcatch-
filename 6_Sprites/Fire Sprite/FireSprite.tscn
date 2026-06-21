@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://7xnmn43d6sr3"]
 
 [ext_resource type="Script" uid="uid://dc8vo20cpmpbg" path="res://6_Sprites/Fire Sprite/fire_sprite_test.gd" id="1_r5wdd"]
-[ext_resource type="Texture2D" uid="uid://bk132np7wcf5k" path="res://1_Tutorial Stuff/example/creature_placeholder.jpg" id="2_2ov2c"]
+[ext_resource type="Texture2D" uid="uid://bk132np7wcf5k" path="res://1_Tutorial Stuff/example/Placeholder Texturres/creature_placeholder.jpg" id="2_2ov2c"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_rbtgw"]
 
