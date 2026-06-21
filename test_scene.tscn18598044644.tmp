@@ -1,0 +1,120 @@
+[gd_scene load_steps=20 format=3 uid="uid://bopuku1p3csa0"]
+
+[ext_resource type="Shader" uid="uid://kxwu864eola6" path="res://example/default_object.gdshader" id="1_coq8p"]
+[ext_resource type="Texture2D" uid="uid://bkaksukvbnvnv" path="res://crate/texture/crate.png" id="2_2nij2"]
+[ext_resource type="ArrayMesh" uid="uid://cl80o1ow8rxrj" path="res://crate/crate.obj" id="3_7cbxl"]
+[ext_resource type="Shader" uid="uid://c7dhsbe1s7mgu" path="res://example/post_processing.gdshader" id="4_8pr8v"]
+[ext_resource type="Texture2D" uid="uid://b7g6o2uxel3am" path="res://grass 5 - 128x128.png" id="5_2nij2"]
+[ext_resource type="PackedScene" uid="uid://bbdneleyj3c4v" path="res://player.tscn" id="6_7cbxl"]
+[ext_resource type="PackedScene" uid="uid://clc5dre31iskm" path="res://addons/godot-xr-tools/xr/start_xr.tscn" id="7_8pr8v"]
+[ext_resource type="PackedScene" uid="uid://c8l60rnugru40" path="res://addons/godot-xr-tools/objects/pickable.tscn" id="8_buypi"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_buypi"]
+sky_horizon_color = Color(0.506344, 0.527634, 0.555741, 1)
+ground_bottom_color = Color(0.266802, 0.302258, 0.357529, 1)
+ground_horizon_color = Color(0.506344, 0.527634, 0.555741, 1)
+ground_curve = 0.0672719
+use_debanding = false
+
+[sub_resource type="Sky" id="Sky_pjyox"]
+sky_material = SubResource("ProceduralSkyMaterial_buypi")
+
+[sub_resource type="Environment" id="Environment_njel3"]
+background_mode = 2
+sky = SubResource("Sky_pjyox")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rpuu0"]
+render_priority = 0
+shader = ExtResource("4_8pr8v")
+shader_parameter/dither_amount = 0.5
+
+[sub_resource type="QuadMesh" id="QuadMesh_oo8pe"]
+flip_faces = true
+size = Vector2(2, 2)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_njel3"]
+points = PackedVector3Array(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vr1i5"]
+render_priority = 0
+shader = ExtResource("1_coq8p")
+shader_parameter/color_texture = ExtResource("2_2nij2")
+shader_parameter/vertex_wobble = 0.999999977648
+shader_parameter/affine_mapping = 0.7999999821184
+shader_parameter/brightness = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7cbxl"]
+render_priority = 0
+shader = ExtResource("1_coq8p")
+shader_parameter/color_texture = ExtResource("5_2nij2")
+shader_parameter/vertex_wobble = 0.7999999821184
+shader_parameter/affine_mapping = 0.0
+shader_parameter/brightness = 1.530000072675
+
+[sub_resource type="BoxMesh" id="BoxMesh_8pr8v"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_vr1i5"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_rpuu0"]
+
+[node name="Test_Scene" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_njel3")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+light_energy = 2.0
+
+[node name="ScreenQuad" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_rpuu0")
+extra_cull_margin = 16384.0
+mesh = SubResource("QuadMesh_oo8pe")
+
+[node name="Player" parent="." instance=ExtResource("6_7cbxl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7155762, 2.6819472, 0)
+
+[node name="StartXR" parent="Player" instance=ExtResource("7_8pr8v")]
+
+[node name="objects" type="Node3D" parent="."]
+
+[node name="Crate" type="Node3D" parent="objects"]
+transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, -0.38498658, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="objects/Crate"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="objects/Crate/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_njel3")
+
+[node name="Crate" type="MeshInstance3D" parent="objects/Crate"]
+material_override = SubResource("ShaderMaterial_vr1i5")
+mesh = ExtResource("3_7cbxl")
+skeleton = NodePath("../../..")
+
+[node name="Floor" type="Node3D" parent="objects"]
+transform = Transform3D(54.889202, 8.742278e-08, 0, -4.7985664e-06, 1, 0, 0, 0, -40.478687, 0, -1.4450614, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="objects/Floor"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="objects/Floor/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_njel3")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="objects/Floor"]
+material_override = SubResource("ShaderMaterial_7cbxl")
+mesh = SubResource("BoxMesh_8pr8v")
+skeleton = NodePath("")
+
+[node name="ThrowTest" type="Node3D" parent="objects"]
+transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0, 0)
+
+[node name="PickableObject" parent="objects/ThrowTest" instance=ExtResource("8_buypi")]
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="objects/ThrowTest/PickableObject"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4134926, 0)
+shape = SubResource("BoxShape3D_vr1i5")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="objects/ThrowTest/PickableObject"]
+transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 1.3748988, 0)
+mesh = SubResource("BoxMesh_rpuu0")

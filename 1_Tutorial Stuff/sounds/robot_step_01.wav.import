@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://joxl3kh67l1r"
+path="res://.godot/imported/robot_step_01.wav-cef7ef9a92ec1f25f75b35fd8f6c03bf.sample"
+
+[deps]
+
+source_file="res://1_Tutorial Stuff/sounds/robot_step_01.wav"
+dest_files=["res://.godot/imported/robot_step_01.wav-cef7ef9a92ec1f25f75b35fd8f6c03bf.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

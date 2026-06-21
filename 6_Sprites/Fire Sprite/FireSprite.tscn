@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://7xnmn43d6sr3"]
+
+[ext_resource type="Script" uid="uid://dc8vo20cpmpbg" path="res://6_Sprites/Fire Sprite/fire_sprite_test.gd" id="1_r5wdd"]
+[ext_resource type="Texture2D" uid="uid://bk132np7wcf5k" path="res://1_Tutorial Stuff/example/Placeholder Texturres/creature_placeholder.jpg" id="2_2ov2c"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_rbtgw"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wbt8j"]
+albedo_texture = ExtResource("2_2ov2c")
+
+[sub_resource type="BoxMesh" id="BoxMesh_7xo31"]
+
+[node name="Fire Sprite" type="Area3D" unique_id=1672739950]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("1_r5wdd")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=83610559]
+shape = SubResource("BoxShape3D_rbtgw")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1382623855]
+material_override = SubResource("StandardMaterial3D_wbt8j")
+mesh = SubResource("BoxMesh_7xo31")
+skeleton = NodePath("../CollisionShape3D")

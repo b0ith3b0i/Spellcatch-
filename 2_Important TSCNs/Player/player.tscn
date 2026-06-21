@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://bbdneleyj3c4v"]
+
+[ext_resource type="PackedScene" uid="uid://prh35jb6tjtd" path="res://1_Tutorial Stuff/sophia_skin/sophia_skin.tscn" id="1_olxfv"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_bpg7g"]
+radius = 0.26708984
+height = 1.6767578
+
+[node name="player_3d" type="CharacterBody3D" unique_id=658321246]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2072355298]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.011278629, 0.81101876, 0.007072568)
+shape = SubResource("CapsuleShape3D_bpg7g")
+
+[node name="SophiaSkin" parent="." unique_id=1805473484 instance=ExtResource("1_olxfv")]
+script = null

@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://ck5uxr3ugo3ba"]
+
+[ext_resource type="Shader" uid="uid://kxwu864eola6" path="res://1_Tutorial Stuff/Shaders/default_object.gdshader" id="1_ihu0e"]
+[ext_resource type="Texture2D" uid="uid://d3i2nc4ahdek2" path="res://1_Tutorial Stuff/example/Placeholder Texturres/creature_placeholder.png" id="2_ihu0e"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_by2da"]
+render_priority = 0
+shader = ExtResource("1_ihu0e")
+shader_parameter/color_texture = ExtResource("2_ihu0e")
+shader_parameter/vertex_wobble = 1.0
+shader_parameter/affine_mapping = 1.0
+shader_parameter/brightness = 1.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_702gq"]
+
+[node name="Creature_test" type="Node3D"]
+
+[node name="RigidBody3D" type="RigidBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D"]
+material_override = SubResource("ShaderMaterial_by2da")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
+shape = SubResource("SphereShape3D_702gq")

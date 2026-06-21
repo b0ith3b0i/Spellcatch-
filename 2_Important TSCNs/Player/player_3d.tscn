@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://byxnkkl2xt7ht"]
+
+[ext_resource type="Script" uid="uid://c0qmuxasxghop" path="res://2_Important TSCNs/Player/player_3d.gd" id="1_i4oky"]
+[ext_resource type="PackedScene" uid="uid://prh35jb6tjtd" path="res://1_Tutorial Stuff/sophia_skin/sophia_skin.tscn" id="1_rmpuq"]
+[ext_resource type="PackedScene" uid="uid://b2xtxu271j2kl" path="res://4_Gadgets/Net/net_hitbox.tscn" id="2_mjgs4"]
+[ext_resource type="AudioStream" uid="uid://muc306r8vowr" path="res://3_Music/The Lost Land - Fossil Field (1 Hour) - Ape Escape.mp3" id="3_b0bjw"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_bpg7g"]
+radius = 0.26708984
+height = 1.6767578
+
+[node name="Player3D" type="CharacterBody3D" unique_id=658321246]
+script = ExtResource("1_i4oky")
+gadget_hitbox_scene = ExtResource("2_mjgs4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2072355298]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.011278629, 0.81101876, 0.007072568)
+shape = SubResource("CapsuleShape3D_bpg7g")
+
+[node name="SophiaSkin" parent="." unique_id=693567013 instance=ExtResource("1_rmpuq")]
+unique_name_in_owner = true
+
+[node name="CameraPivot" type="Node3D" parent="." unique_id=446505834]
+unique_name_in_owner = true
+transform = Transform3D(0.99984086, -0.014954216, 0.009721405, 0.017836317, 0.83828044, -0.5449475, -9.313225e-10, 0.5450342, 0.8384138, 0, 1.5, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot" unique_id=1512071693]
+unique_name_in_owner = true
+transform = Transform3D(-1, 0, -1.509958e-07, 0, 1, 0, 1.509958e-07, 0, -1, 0, 0, -10)
+keep_aspect = 0
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="CameraPivot" unique_id=212657882]
+transform = Transform3D(0.999841, 0.017836321, -9.313227e-10, -0.014954215, 0.83828044, 0.5450342, 0.009721406, -0.54494756, 0.8384139, -0.026754482, -1.2574207, 0.8174213)
+stream = ExtResource("3_b0bjw")
+autoplay = true

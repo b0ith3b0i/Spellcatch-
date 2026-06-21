@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://b2xtxu271j2kl"]
+
+[ext_resource type="Script" uid="uid://dxusiptwm3kog" path="res://4_Gadgets/Net/Net.gd" id="1_etqws"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lkt7f"]
+size = Vector3(2, 1.5, 2)
+
+[node name="NetHitbox" type="Node3D" unique_id=2010888722]
+
+[node name="Area3D" type="Area3D" parent="." unique_id=25428503]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5239868, 0, -0.061401367)
+collision_layer = 0
+collision_mask = 4
+script = ExtResource("1_etqws")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=2134498557]
+shape = SubResource("BoxShape3D_lkt7f")
