@@ -1,8 +1,15 @@
 ##TODO
-#https://www.youtube.com/watch?v=JlgZtOFMdfc&t=255s
-## Adjust the camera control script to work like the Ape Escape camera
-## Wall Jumping / Sliding
-## PROBABLY NOT(Cyote time) / Ground Slide 
+#https://www.youtube.com/watch?v=JlgZtOFMdfc&t=255s (The old movement/camera tutorial i used)
+## The 3 demo gadgets (Net is done, other 2 idk yet)
+## Functional sprite movement and thinking
+## Level design
+
+## LESS IMPORTANT TODO:
+## An actual design for the player and main villian
+## Music for the 3 levels (Tutorial, one Fire area and one Water area)
+## 3d models for the sprites and stuff
+## Intro cutscene and voice acting
+## Bart Bash
 
 extends CharacterBody3D
 
@@ -22,12 +29,12 @@ extends CharacterBody3D
 @export var double_jump_impulse := 10.0 # Strength of second jump
 @export var _gravity := -30.0 # Custom gravity acceleration
 
-# --- Ape Escape Multi-Gadget System Configuration ---
-enum GadgetType { NONE, CLUB, NET, SLINGSHOT }
+# Gadgets
+enum GadgetType { NONE, CLUB, NET, SLINGSHOT } #placeholder names, change when come up with new items
 
 @export_group("Gadgets")
 @export var gadget_scenes: Array[PackedScene] = [] 
-@export var current_gadget: GadgetType = GadgetType.NET # Defaulted to Net for Fire Sprites
+@export var current_gadget: GadgetType = GadgetType.NET # Swap the current gadget type
 @export var right_stick_deadzone: float = 0.60 # Must push stick at least 60% out to swing
 @export var gadget_active_slot: bool = true # Toggle via game logic if gadget is selected/equipped
 
@@ -35,8 +42,8 @@ enum GadgetType { NONE, CLUB, NET, SLINGSHOT }
 var _is_snapping := false
 var _target_camera_height := 2.5
 var _has_double_jumped := false
-var _is_gadget_swung := false # One-shot lock tracker
-var _is_playing_attack_animation := false # Fixes the glitched backward flicking bug
+var _is_gadget_swung := false 
+var _is_playing_attack_animation := false
 
 # Stores the camera motion
 var _camera_input_direction := Vector2.ZERO
@@ -48,7 +55,6 @@ var _last_movement_direction := Vector3.BACK
 @onready var _skin: SophiaSkin = %SophiaSkin as SophiaSkin
 
 func _ready() -> void:
-	# Safely make your original camera current so you aren't in first person
 	if _camera != null:
 		_camera.make_current()
 
@@ -67,29 +73,30 @@ func _unhandled_input(event: InputEvent) -> void:
 	if is_camera_motion:
 		_camera_input_direction = event.screen_relative * mouse_sensitivity
 
-# Handles camera and player movement physics
+# Camera and player movement physics
 func _physics_process(delta: float) -> void:
 	var move_direction := Vector3.ZERO
 	
 	if Input.is_action_just_pressed("camera_snap"):
 		_is_snapping = true
 		
-	# 1. READ INPUTS & DETECT OVERRIDES
+		# 1. Read Inputs
 	var dpad_look := Input.get_vector("look_left", "look_right", "look_up", "look_down")
+	
 	if dpad_look.length() > 0.0:
 		_camera_input_direction = dpad_look * (mouse_sensitivity * 10.0)
 		_is_snapping = false
+	else:
+		# Clear camera when dpad is pressed
+		_camera_input_direction = Vector2.ZERO 
 		
 	if _camera_input_direction.length() > 0.0:
 		_is_snapping = false
-		
-	if Input.is_action_just_pressed("camera_snap"):
-		_is_snapping = true
-		
-	# 2. PROCESSS RIGHT JOYSTICK FOR GADGET USE (Ape Escape Style)
+
+	# 2. Right joystick for using Gadgets
 	process_gadget_use()
 
-	# 3. MANUAL CAMERA ROTATION PROCESSING
+	# 3. Camera Rotating
 	var is_player_manually_looking := dpad_look.length() > 0.0 or _camera_input_direction.length() > 0.0
 	if not _is_snapping and _camera_pivot != null:
 		if is_player_manually_looking:
@@ -97,12 +104,12 @@ func _physics_process(delta: float) -> void:
 			_camera_pivot.rotation.x = clamp(_camera_pivot.rotation.x, -PI / 6.0, PI / 3.0)
 			_camera_pivot.rotation.y -= _camera_input_direction.x * delta
 		else:
-			# --- APE ESCAPE AUTO-TRACKING SYSTEM ---
+			# Camera auto-trackinator
 			var horizontal_speed := Vector3(velocity.x, 0.0, velocity.z).length()
 			if horizontal_speed > 0.5 and is_on_floor() and _skin != null:
 				_camera_pivot.global_rotation.y = lerp_angle(_camera_pivot.global_rotation.y, _skin.global_rotation.y, camera_auto_follow_speed * delta)
 
-	# 4. CAMERA SNAPPING PROCESSING
+	# 4. Camera snap
 	if _is_snapping and _skin != null and _camera_pivot != null:
 		_camera_pivot.global_rotation.y = lerp_angle(
 			_camera_pivot.global_rotation.y,
@@ -119,7 +126,7 @@ func _physics_process(delta: float) -> void:
 			_is_snapping = false
 			_camera_input_direction = Vector2.ZERO
 
-	# 5. CHARACTER MOVEMENT & GEOMETRY MATHEMATICS
+	# 5. Movement
 	var raw_input := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	var input_tilt := raw_input.length()
 	var forward := Vector3.FORWARD
@@ -135,7 +142,7 @@ func _physics_process(delta: float) -> void:
 	if move_direction.length() > 0.0:
 		move_direction = move_direction.normalized()
 
-	# Ground Velocity Interpolation Split
+	# Ground Velocity
 	var y_velocity := velocity.y
 	velocity.y = 0.0
 	
@@ -166,9 +173,8 @@ func _physics_process(delta: float) -> void:
 	if raw_input.length() > 0.05:
 		_last_movement_direction = move_direction
 
-	# 6. SKIN ROTATION & ANIMATION INTERFACES
+	# 6. Animation and skin functions
 	if _skin != null:
-		# PATCH FIXED: Do not allow the movement logic to hijack rotation during an active weapon swing!
 		if not _is_playing_attack_animation:
 			var target_angle := Vector3.BACK.signed_angle_to(_last_movement_direction, Vector3.UP)
 			_skin.rotation.y = lerp_angle(_skin.rotation.y, target_angle, rotation_speed * delta)
@@ -185,7 +191,7 @@ func _physics_process(delta: float) -> void:
 			else:
 				_skin.idle()
 
-# --- DETECT RIGHT STICK TILT AND SPAWN GADGET HITBOX ---
+# Detect the right stick and spawn the Net hitbox
 func process_gadget_use() -> void:
 	if not gadget_active_slot:
 		return
@@ -197,7 +203,7 @@ func process_gadget_use() -> void:
 	
 	if stick_input.length() >= right_stick_deadzone:
 		if not _is_gadget_swung:
-			_is_gadget_swung = true # Only swing ONCE per flick out
+			_is_gadget_swung = true # Only swing ONCE per flick out (i forgot this for so long and it PISSED me off)
 			use_gadget(stick_input.normalized())
 	else:
 		# Reset tracking only when the stick returns near deadzone center
@@ -206,17 +212,17 @@ func process_gadget_use() -> void:
 
 func use_gadget(stick_direction: Vector2) -> void:
 	var gadget_index = int(current_gadget) - 1
-	
+	# Check if i actually remembered to attach the damn hitbox scene
 	if current_gadget == GadgetType.NONE:
 		return
 	if gadget_index < 0 or gadget_index >= gadget_scenes.size() or gadget_scenes[gadget_index] == null:
-		print("Warning: No hitbox scene assigned for the current gadget slot!")
+		print("you didnt put a hitbox dingus (current selected gadgetslot)")
 		return
 		
-	# 1. Turn on rotation lock so our model stays locked forward during strike frame windows
+	# Turn on rotation lock so our model stays locked forward during strike frame windows
 	_is_playing_attack_animation = true
 
-	# 2. Calculate camera-relative vector for the attack direction
+	# Calculate camera-relative vector for the attack direction
 	var cam_forward = -_camera_pivot.global_basis.z
 	var cam_right = _camera_pivot.global_basis.x
 	
@@ -225,32 +231,30 @@ func use_gadget(stick_direction: Vector2) -> void:
 	cam_forward = cam_forward.normalized()
 	cam_right = cam_right.normalized()
 	
-	# FIXED AXES: Transferred coordinates properly to map forward/backward stick vectors straight out ahead
 	var attack_direction_3d = (cam_right * -stick_direction.x) + (cam_forward * stick_direction.y)
 	attack_direction_3d = attack_direction_3d.normalized()
 	
-	# 3. Face the player's 3D skin model instantly toward the attack direction
+	# Face the player's 3D skin model instantly toward the attack direction
 	if _skin != null:
-		# SYNCED: Aligned base vector mapping with global movement framework
 		var attack_angle = Vector3.BACK.signed_angle_to(attack_direction_3d, Vector3.UP)
 		_skin.rotation.y = attack_angle
 		
 		# Update internal movement trajectory direction so it holds this rotation frame permanently
 		_last_movement_direction = attack_direction_3d 
 		
-	# 4. Instantiate the weapon scene out of our array configuration
+	# Instantiate the weapon scene out of our array configuration
 	var new_hitbox = gadget_scenes[gadget_index].instantiate() as Node3D
 	get_parent().add_child(new_hitbox)
 	
-	# 5. Position it outward directly in front of where the skin is now looking
+	# Position it outward directly in front of where the skin is now looking
 	var strike_offset_distance = 1.5
 	new_hitbox.global_position = global_position + (attack_direction_3d * strike_offset_distance)
 	
-	# 6. Orient the hitbox direction to look away from the player
+	# Orient the hitbox direction to look away from the player
 	var look_target = new_hitbox.global_position + attack_direction_3d
 	new_hitbox.look_at(look_target, Vector3.UP)
 	
-	# 7. Pass explicit animation calls depending on what tool is used
+	# Pass explicit animation calls depending on what tool is used
 	if _skin.has_method("attack"):
 		match current_gadget:
 			GadgetType.CLUB:
@@ -260,14 +264,14 @@ func use_gadget(stick_direction: Vector2) -> void:
 			GadgetType.SLINGSHOT:
 				_skin.attack("slingshot_shoot")
 		
-	# 8. Let the hitbox collision track targets for a short lifetime frame
+	# Let the hitbox collision track targets for a short lifetime frame
 	await get_tree().create_timer(0.25).timeout
 	if is_instance_valid(new_hitbox):
 		new_hitbox.queue_free()
 		
-	# 9. Release the lock so standard analog runtime movement rotation functions again
+	# Release the lock so standard analog runtime movement rotation functions again
 	_is_playing_attack_animation = false
 
-# Call this method anywhere to switch active gadget slots on the fly
+# call this to switch gadgets 
 func switch_gadget(new_gadget_type: GadgetType) -> void:
 	current_gadget = new_gadget_type

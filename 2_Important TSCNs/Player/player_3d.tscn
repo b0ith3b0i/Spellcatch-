@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://c0qmuxasxghop" path="res://2_Important TSCNs/Player/player_3d.gd" id="1_i4oky"]
 [ext_resource type="PackedScene" uid="uid://prh35jb6tjtd" path="res://1_Tutorial Stuff/sophia_skin/sophia_skin.tscn" id="1_rmpuq"]
-[ext_resource type="PackedScene" uid="uid://b2xtxu271j2kl" path="res://4_Gadgets/Net/net_hitbox.tscn" id="2_mjgs4"]
 [ext_resource type="AudioStream" uid="uid://muc306r8vowr" path="res://3_Music/The Lost Land - Fossil Field (1 Hour) - Ape Escape.mp3" id="3_b0bjw"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_bpg7g"]
@@ -11,7 +10,6 @@ height = 1.6767578
 
 [node name="Player3D" type="CharacterBody3D" unique_id=658321246]
 script = ExtResource("1_i4oky")
-gadget_hitbox_scene = ExtResource("2_mjgs4")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2072355298]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.011278629, 0.81101876, 0.007072568)

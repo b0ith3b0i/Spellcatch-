@@ -1,4 +1,4 @@
-class_name flowerwallCRT
+#class_name flowerwallCRT
 extends Control
 
 @export var flowerwall_crt_config_ui: CanvasLayer
